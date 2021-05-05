@@ -69,7 +69,7 @@ export default class Home extends React.Component {
                 <Page
                   pageNumber={pageNumber}
                   className="dark-shadow "
-                  width={500}
+                  width={600}
                 />
               </motion.div>
             </Document>
