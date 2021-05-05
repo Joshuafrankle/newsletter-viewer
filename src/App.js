@@ -1,33 +1,44 @@
+import React, { Component } from "react";
 import "./App.css";
-import React, { useState } from "react";
-import { Document, Page } from "react-pdf";
+import { Document, Page, pdfjs } from "react-pdf";
+import document from "./elevate_now.pdf";
+import "react-bootstrap";
 
-function PDFViewer() {
-  const [numPages, setNumPages] = useState(null);
-  const [pageNumber, setPageNumber] = useState(1);
+pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/${pdfjs.version}/pdf.worker.js`;
+class App extends Component {
+  state = { numPages: null, pageNumber: 1 };
 
-  function onDocumentLoadSuccess({ numPages }) {
-    setNumPages(numPages);
+  onDocumentLoadSuccess = ({ numPages }) => {
+    this.setState({ numPages });
+  };
+
+  goToPrevPage = () =>
+    this.setState((state) => ({ pageNumber: state.pageNumber - 1 }));
+  goToNextPage = () =>
+    this.setState((state) => ({ pageNumber: state.pageNumber + 1 }));
+
+  render() {
+    const { pageNumber, numPages } = this.state;
+
+    return (
+      <div className="bg-dark">
+        <nav>
+          <button onClick={this.goToPrevPage}>Prev</button>
+          <button onClick={this.goToNextPage}>Next</button>
+        </nav>
+
+        <div style={{ width: 600 }}>
+          <Document file={document} onLoadSuccess={this.onDocumentLoadSuccess}>
+            <Page pageNumber={pageNumber} width={600} />
+          </Document>
+        </div>
+
+        <p>
+          Page {pageNumber} of {numPages}
+        </p>
+      </div>
+    );
   }
-
-  return (
-    <div>
-      <Document file="somefile.pdf" onLoadSuccess={onDocumentLoadSuccess}>
-        <Page pageNumber={pageNumber} />
-      </Document>
-      <p>
-        Page {pageNumber} of {numPages}
-      </p>
-    </div>
-  );
-}
-
-function App() {
-  return (
-    <div className="App">
-      <PDFViewer />
-    </div>
-  );
 }
 
 export default App;
